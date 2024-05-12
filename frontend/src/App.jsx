@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { Button, Rating, Spinner } from 'flowbite-react';
+import ImportedMovieList from '../src/components/ImportedMovieList';
+import './app.css';
 
 const App = props => {
   const [movies, setMovies] = useState([]);
@@ -23,13 +25,18 @@ const App = props => {
   return (
     <Layout>
       <Heading />
-
-      <MovieList loading={loading}>
+      <ImportedMovieList/>
+      
+       <MovieList loading={loading}>
         {movies.map((item, key) => (
-          <MovieItem key={key} {...item} />
+          
+          <MovieItem key={key} {...item} /> 
         ))}
       </MovieList>
+    
+      
     </Layout>
+    
   );
 };
 
@@ -61,7 +68,9 @@ const MovieList = props => {
   if (props.loading) {
     return (
       <div className="text-center">
+       
         <Spinner size="xl" />
+        
       </div>
     );
   }
@@ -93,6 +102,7 @@ const MovieItem = props => {
 
                 {props.rating
                   ? <Rating>
+                    
                       <Rating.Star />
 
                       <span className="ml-0.5">

@@ -1,48 +1,28 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository;  // Assicurati che il namespace sia corretto per la tua struttura di directory
 
-use App\Entity\Movie;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
-/**
- * @extends ServiceEntityRepository<Movie>
- *
- * @method Movie|null find($id, $lockMode = null, $lockVersion = null)
- * @method Movie|null findOneBy(array $criteria, array $orderBy = null)
- * @method Movie[]    findAll()
- * @method Movie[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class MovieRepository extends ServiceEntityRepository
+class MovieRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function findByCriteria(?string $genre, ?string $sort): array
     {
-        parent::__construct($registry, Movie::class);
+        $qb = $this->createQueryBuilder('m');
+
+        if ($genre) {
+            $qb->andWhere('m.genre = :genre')
+               ->setParameter('genre', $genre);
+        }
+
+        if ($sort) {
+            if ($sort === 'most_recent') {
+                $qb->orderBy('m.releaseDate', 'DESC');
+            } elseif ($sort === 'rating') {
+                $qb->orderBy('m.rating', 'DESC');
+            }
+        }
+
+        return $qb->getQuery()->getResult();
     }
-
-    //    /**
-    //     * @return Movie[] Returns an array of Movie objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Movie
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }
